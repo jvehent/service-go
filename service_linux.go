@@ -159,6 +159,10 @@ func (s *linuxService) Install() error {
 	}
 
 	if s.flavor == initSystemd {
+		err = exec.Command("systemctl", "enable", s.name+".service").Run()
+		if err != nil {
+			return err
+		}
 		return exec.Command("systemctl", "daemon-reload").Run()
 	}
 
