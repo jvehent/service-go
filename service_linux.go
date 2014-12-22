@@ -354,6 +354,8 @@ ConditionFileIsExecutable={{.Path}}
 StartLimitInterval=5
 StartLimitBurst=10
 ExecStart={{.Path}}
+Restart=always
+RestartSec=120
 
 [Install]
 WantedBy=multi-user.target
