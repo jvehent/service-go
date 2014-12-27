@@ -1,14 +1,15 @@
 package service
 
 import (
+	"bitbucket.org/kardianos/osext"
 	"fmt"
+	"io/ioutil"
 	"log/syslog"
 	"os"
 	"os/exec"
 	"os/signal"
+	"strings"
 	"text/template"
-
-	"bitbucket.org/kardianos/osext"
 )
 
 const (
@@ -17,45 +18,44 @@ const (
 	initSystemd
 )
 
-func getFlavor() initFlavor {
-	flavor := initSystemV
-	if isSystemd() {
-		flavor = initSystemd
-	} else if isUpstart() {
-		flavor = initUpstart
+// the default flavor is initSystemV. we lookup the command line of
+// process 1 to detect systemd or upstart
+func getFlavor() (flavor initFlavor, err error) {
+	initCmd, err := ioutil.ReadFile("/proc/1/cmdline")
+	if err != nil {
+		return
 	}
-	return flavor
+	init := fmt.Sprintf("%s", initCmd)
+	if strings.Contains(init, "init [") {
+		flavor = initSystemV
+	} else if strings.Contains(init, "systemd") {
+		flavor = initSystemd
+	} else if strings.Contains(init, "init") {
+		flavor = initUpstart
+	} else {
+		// failed to detect init system, falling back to sysvinit
+		flavor = initSystemV
+	}
+	return
 }
 
 func newService(c *Config) (Service, error) {
+	var err error
+	flavor, err := getFlavor()
+	if err != nil {
+		return nil, err
+	}
 	s := &linuxService{
-		flavor:      getFlavor(),
+		flavor:      flavor,
 		name:        c.Name,
 		displayName: c.DisplayName,
 		description: c.Description,
 	}
-
-	var err error
 	s.logger, err = syslog.New(syslog.LOG_INFO, s.name)
 	if err != nil {
 		return nil, err
 	}
-
 	return s, nil
-}
-
-func isUpstart() bool {
-	if _, err := os.Stat("/sbin/upstart-udev-bridge"); err == nil {
-		return true
-	}
-	return false
-}
-
-func isSystemd() bool {
-	if _, err := os.Stat("/run/systemd/system"); err == nil {
-		return true
-	}
-	return false
 }
 
 type linuxService struct {
@@ -73,9 +73,9 @@ type initFlavor uint8
 func (f initFlavor) String() string {
 	switch f {
 	case initSystemV:
-		return "System-V"
+		return "sysvinit"
 	case initUpstart:
-		return "Upstart"
+		return "upstart"
 	case initSystemd:
 		return "systemd"
 	default:
