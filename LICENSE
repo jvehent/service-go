@@ -1,3 +1,5 @@
+--- Original software license below. All code until commit ceb84c97ec723b81721aeb072e50e2893dff9565
+--- and before date 2014-12-21 are the work of the original author
 Copyright (c) 2012 Daniel Theophanes
 
 This software is provided 'as-is', without any express or implied
@@ -18,3 +20,6 @@ freely, subject to the following restrictions:
 
    3. This notice may not be removed or altered from any source
    distribution.
+
+--- Work performed after date 2014-12-21 are the work of Julien Vehent
+--- based on the work of the original author
