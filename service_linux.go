@@ -211,11 +211,11 @@ func (s *linuxService) Start() error {
 func (s *linuxService) Stop() error {
 	switch s.flavor {
 	case initSystemd:
-		return exec.Command("systemctl", "stop", s.name+".service").Run()
+		return exec.Command("systemctl", "stop", s.name+".service").Start()
 	case initUpstart:
-		return exec.Command("initctl", "stop", s.name).Run()
+		return exec.Command("initctl", "stop", s.name).Start()
 	default:
-		return exec.Command("service", s.name, "stop").Run()
+		return exec.Command("service", s.name, "stop").Start()
 	}
 }
 
