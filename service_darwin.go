@@ -2,14 +2,13 @@ package service
 
 import (
 	"fmt"
+	"github.com/kardianos/osext"
 	"log/syslog"
 	"os"
 	"os/exec"
 	"os/signal"
 	"os/user"
 	"text/template"
-
-	"bitbucket.org/kardianos/osext"
 )
 
 const maxPathSize = 32 * 1024

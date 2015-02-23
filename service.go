@@ -2,7 +2,7 @@
 // Currently supports Windows, Linux/(systemd | Upstart | SysV), and OSX/Launchd.
 package service
 
-import "bitbucket.org/kardianos/osext"
+import "github.com/kardianos/osext"
 
 // Creates a new service. name is the internal name
 // and should not contain spaces. Display name is the pretty print
