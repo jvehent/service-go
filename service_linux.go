@@ -332,8 +332,9 @@ stop on runlevel [!2345]
 
 #setuid username
 
+# stop the respawn is process fails to start 5 times within 5 minutes
 respawn
-respawn limit 10 5
+respawn limit 5 300
 umask 022
 
 console none
@@ -354,8 +355,13 @@ ConditionFileIsExecutable={{.Path}}
 StartLimitInterval=5
 StartLimitBurst=10
 ExecStart={{.Path}}
-Restart=always
-RestartSec=120
+
+# respawn process on crash after a 3s wait
+# if fails to start 5 times within 5 minutes, stop trying
+Restart=on-failure
+RestartSec=3s
+StartLimitInterval=300
+StartLimitBurst=5
 
 [Install]
 WantedBy=multi-user.target
