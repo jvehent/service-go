@@ -370,6 +370,7 @@ exec {{.Path}}
 const systemdScript = `[Unit]
 Description={{.Description}}
 ConditionFileIsExecutable={{.Path}}
+After=network.target
 
 [Service]
 ExecStart={{.Path}}
