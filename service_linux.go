@@ -372,10 +372,7 @@ Description={{.Description}}
 ConditionFileIsExecutable={{.Path}}
 
 [Service]
-StartLimitInterval=5
-StartLimitBurst=10
 ExecStart={{.Path}}
-
 # respawn process on crash after a 3s wait
 # if fails to start 5 times within 5 minutes, stop trying
 Restart=on-failure
